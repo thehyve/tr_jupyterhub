@@ -1,2 +1,2 @@
 .terraform
-*openrc.sh
+vars.sh
