@@ -53,6 +53,24 @@ variable "domain" {
   type = string
   description = "A domain name for FreeIPA server. Export TF_VAR_domain environment variable to define."
 }
+variable "nameserver41" {
+  type = string
+  description = "An ip address of nameserver"
+  default = ""
+}
+variable "nameserver42" {
+  type = string
+  description = "An ip address of nameserver"
+  default = ""
+}
+variable "nameserver43" {
+  type = string
+  description = "An ip address of nameserver"
+  default = ""
+}
+variable "gateway4" {
+  type = string
+}
 
 # User Hetzner cloud
 provider "hcloud" {
@@ -111,6 +129,6 @@ resource "null_resource" "network" {
     ip_assignment_id = "${hcloud_floating_ip_assignment.jh.id}"
   }
   provisioner "local-exec" {
-    command = "ansible-playbook  -i \"${hcloud_server.jh.ipv4_address},\" --ssh-common-args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" --extra-vars '{\"server_name\":\"${var.jh_server_name}\", \"domain_name\":\"${var.domain}\", \"ips\":[\"${data.hcloud_floating_ip.jh.ip_address}/32\", \"${hcloud_server.jh.ipv4_address}/32\"]}' --user=\"${var.remote_user}\" network.yml"
+    command = "ansible-playbook  -i \"${hcloud_server.jh.ipv4_address},\" --ssh-common-args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" --extra-vars '{\"nameservers\":[\"${var.nameserver41}\", \"${var.nameserver42}\", \"${var.nameserver43}\"], \"server_name\":\"${var.jh_server_name}\", \"domain_name\":\"${var.domain}\", \"ips\":[\"${data.hcloud_floating_ip.jh.ip_address}/32\", \"${hcloud_server.jh.ipv4_address}/32\"], \"gateway4\":\"${var.gateway4}\"}' --user=\"${var.remote_user}\" network.yml"
   }
 }
