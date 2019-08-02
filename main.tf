@@ -132,3 +132,17 @@ resource "null_resource" "network" {
     command = "ansible-playbook  -i \"${hcloud_server.jh.ipv4_address},\" --ssh-common-args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" --extra-vars '{\"nameservers\":[\"${var.nameserver41}\", \"${var.nameserver42}\", \"${var.nameserver43}\"], \"server_name\":\"${var.jh_server_name}\", \"domain_name\":\"${var.domain}\", \"ips\":[\"${data.hcloud_floating_ip.jh.ip_address}/32\", \"${hcloud_server.jh.ipv4_address}/32\"], \"gateway4\":\"${var.gateway4}\"}' --user=\"${var.remote_user}\" network.yml"
   }
 }
+
+# Configure home drive
+resource "null_resource" "disk" {
+  depends_on = [
+    hcloud_volume_attachment.jh,
+    null_resource.network,
+  ]
+  triggers = {
+    volume_assignment_id = "${hcloud_volume_attachment.jh.id}"
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook -i \"${data.hcloud_floating_ip.jh.ip_address},\" --ssh-common-args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" --extra-vars '{\"disk_id\":\"${data.hcloud_volume.jh.id}\"}' --user=\"${var.remote_user}\" disk.yml"
+  }
+}
