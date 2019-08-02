@@ -101,3 +101,16 @@ resource "hcloud_floating_ip_assignment" "jh" {
   floating_ip_id = "${data.hcloud_floating_ip.jh.id}"
   server_id = "${hcloud_server.jh.id}"
 }
+
+# Configure network
+resource "null_resource" "network" {
+  depends_on = [
+    hcloud_floating_ip_assignment.jh,
+  ]
+  triggers = {
+    ip_assignment_id = "${hcloud_floating_ip_assignment.jh.id}"
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i \"${hcloud_server.jh.ipv4_address},\" --ssh-common-args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" --extra-vars '{\"server_name\":\"${var.jh_server_name}\", \"domain_name\":\"${var.domain}\", \"ips\":[\"${data.hcloud_floating_ip.jh.ip_address}/32\", \"${hcloud_server.jh.ipv4_address}/32\"]}' --user=\"${var.remote_user}\" network.yml"
+  }
+}
