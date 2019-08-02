@@ -37,8 +37,7 @@ variable "remote_user" {
 }
 variable "jh_server_name" {
   type = string
-  description = "Hostname for JupyterHub server"
-  default = "jh"
+  description = "Hostname for JupyterHub server. Export TF_VAR_jh_server_name variable to define a value"
 }
 variable "jh_location" {
   type = string
