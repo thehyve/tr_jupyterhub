@@ -20,4 +20,7 @@
           route:
           - network: "{{ gateway4 }}"
             prefix: "32"
+  - name: define hostname
+    hostname:
+      name: "{{ server_name }}.{{ domain_name }}"
 ...
