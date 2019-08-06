@@ -71,6 +71,11 @@ variable "nameserver43" {
 variable "gateway4" {
   type = string
 }
+variable "otp" {
+  type = string
+  description = "OTP password to install freeipa client. Use -var='otp=...' CLI option."
+  default = ""
+}
 
 # User Hetzner cloud
 provider "hcloud" {
